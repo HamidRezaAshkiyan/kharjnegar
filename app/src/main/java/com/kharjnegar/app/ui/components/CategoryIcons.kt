@@ -1,6 +1,7 @@
 package com.kharjnegar.app.ui.components
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ReceiptLong
 import androidx.compose.material.icons.rounded.AccountBalance
 import androidx.compose.material.icons.rounded.Category
 import androidx.compose.material.icons.rounded.DirectionsCar
@@ -8,7 +9,6 @@ import androidx.compose.material.icons.rounded.LocalHospital
 import androidx.compose.material.icons.rounded.Movie
 import androidx.compose.material.icons.rounded.Payments
 import androidx.compose.material.icons.rounded.PhoneAndroid
-import androidx.compose.material.icons.rounded.ReceiptLong
 import androidx.compose.material.icons.rounded.Restaurant
 import androidx.compose.material.icons.rounded.ShoppingBag
 import androidx.compose.material.icons.rounded.ShoppingCart
@@ -21,7 +21,7 @@ fun Category.icon(): ImageVector = when (this) {
     Category.GROCERIES -> Icons.Rounded.ShoppingCart
     Category.TRANSPORT -> Icons.Rounded.DirectionsCar
     Category.SHOPPING -> Icons.Rounded.ShoppingBag
-    Category.BILLS -> Icons.Rounded.ReceiptLong
+    Category.BILLS -> Icons.AutoMirrored.Rounded.ReceiptLong
     Category.TELECOM -> Icons.Rounded.PhoneAndroid
     Category.HEALTH -> Icons.Rounded.LocalHospital
     Category.ENTERTAINMENT -> Icons.Rounded.Movie

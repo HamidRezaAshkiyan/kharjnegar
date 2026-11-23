@@ -45,7 +45,7 @@ object BankSmsParser {
     )
 
     private val LABELED_AMOUNT_REGEX = Regex(
-        """(برداشت|خرید|پرداخت|کسر|بدهکار|خروج|کارمزد|واریز|بستانکار|دریافت|سود|حقوق|مبلغ|dr|cr|debit|credit)(?:\s+(?:وجه|از\s+حساب|به\s+حساب|اینترنتی|کارت))?\s*[:：\-]?\s*([+-]?\d{1,3}(?:,\d{3})+|[+-]?\d{3,15})([+-])?""",
+        """(برداشت|خرید|پرداخت|کسر|بدهکار|خروج|کارمزد|واریز|بستانکار|دریافت|سود|حقوق|مبلغ|dr|cr|debit|credit)(?:\s+(?:وجه|اینترنتی|کارت))?\s*[:：\-]?\s*([+-]?\d{1,3}(?:,\d{3})+|[+-]?\d{3,15})([+-])?""",
         RegexOption.IGNORE_CASE
     )
 
@@ -93,11 +93,15 @@ object BankSmsParser {
         // 4. Extract remaining balance first so we don't mistake balance for transaction amount
         val balanceRaw = extractBalance(normalized)
 
-        // 5. Remove balance & account segments when searching for transaction amount
+        // 5. Remove balance & account/card segments when searching for transaction amount
         val textWithoutBalance = BALANCE_LINE_REGEX.replace(normalized, " ")
+        val textForAmount = ACCOUNT_REGEX.replace(
+            MASKED_CARD_REGEX.replace(textWithoutBalance, " "),
+            " "
+        )
 
         // 6. Extract transaction amount and type
-        val (amountRaw, type) = extractAmountAndType(textWithoutBalance, lower) ?: return null
+        val (amountRaw, type) = extractAmountAndType(textForAmount, lower) ?: return null
         if (amountRaw <= 0L) return null
 
         val multiplier = if (unit == CurrencyUnit.TOMAN) 10L else 1L
