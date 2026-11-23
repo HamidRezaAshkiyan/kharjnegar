@@ -1,0 +1,54 @@
+name: CI Build & Offline Privacy Audit
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+
+      - name: Run Unit Tests
+        run: gradle testDebugUnitTest --stacktrace
+
+      - name: Build Debug APK
+        run: gradle assembleDebug --stacktrace
+
+      - name: Verify Zero INTERNET Permission (100% Offline Audit)
+        run: |
+          AAPT2=$(find "${ANDROID_HOME}/build-tools" -name aapt2 | sort -V | tail -n 1)
+          echo "Using aapt2: $AAPT2"
+          PERMS=$("$AAPT2" dump permissions app/build/outputs/apk/debug/app-debug.apk)
+          echo "$PERMS"
+          if echo "$PERMS" | grep -qi "android.permission.INTERNET"; then
+            echo "ERROR: android.permission.INTERNET detected in APK! Violates 100% offline guarantee."
+            exit 1
+          fi
+          if echo "$PERMS" | grep -qi "android.permission.ACCESS_NETWORK_STATE"; then
+            echo "ERROR: android.permission.ACCESS_NETWORK_STATE detected in APK!"
+            exit 1
+          fi
+          echo "PASSED: APK declares zero internet/network permissions."
+
+      - name: Upload Debug APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: kharjnegar-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Minimal wallet / ledger shield with coin accent -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,35 C30,31.7 32.7,29 36,29 L72,29 C75.3,29 78,31.7 78,35 L78,44 L66,44 C61.6,44 58,47.6 58,52 L58,56 C58,60.4 61.6,64 66,64 L78,64 L78,73 C78,76.3 75.3,79 72,79 L36,79 C32.7,79 30,76.3 30,73 Z" />
+    <path
+        android:fillColor="#34D399"
+        android:pathData="M66,48 L80,48 C81.7,48 83,49.3 83,51 L83,57 C83,58.7 81.7,60 80,60 L66,60 C63.8,60 62,58.2 62,56 L62,52 C62,49.8 63.8,48 66,48 Z" />
+    <path
+        android:fillColor="#065F46"
+        android:pathData="M67,54 m-2.5,0 a2.5,2.5 0 1,0 5,0 a2.5,2.5 0 1,0 -5,0" />
+    <!-- Subtle chart bars on wallet -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M37,62 L41,62 L41,70 L37,70 Z M44,55 L48,55 L48,70 L44,70 Z M51,48 L55,48 L55,70 L51,70 Z" />
+</vector>
