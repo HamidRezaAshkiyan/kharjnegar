@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>خرج‌نگار (KharjNegar) — ردیاب هزینه‌های بانکی ۱۰۰٪ آفلاین و متن‌باز</title>
+  <meta name="description" content="100% Offline, Open-Source Iranian Bank SMS Expense Tracker for Android. Zero INTERNET permission, 25+ Iranian banks, Jalali calendar, Toman/Rial support." />
+  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0b1120;
+      --bg-soft: #111827;
+      --card: #162033;
+      --card-border: #24324a;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --primary: #10b981;
+      --primary-dark: #059669;
+      --primary-glow: rgba(16, 185, 129, 0.16);
+      --danger: #f87171;
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Vazirmatn', 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+    html[lang="en"] body {
+      font-family: 'Inter', 'Vazirmatn', system-ui, -apple-system, sans-serif;
+    }
+
+    .container { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
+
+    /* Nav */
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(11, 17, 32, 0.82);
+      border-bottom: 1px solid rgba(36, 50, 74, 0.7);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      height: 68px; gap: 16px;
+    }
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: var(--text); font-weight: 800; font-size: 1.15rem;
+    }
+    .brand img { width: 34px; height: 34px; border-radius: 9px; }
+    .nav-links { display: flex; align-items: center; gap: 20px; }
+    .nav-links a {
+      color: var(--muted); text-decoration: none; font-size: 0.92rem; font-weight: 500;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .lang-btn {
+      background: var(--card); color: var(--text);
+      border: 1px solid var(--card-border); border-radius: 10px;
+      padding: 6px 12px; font-family: inherit; font-size: 0.85rem; font-weight: 600;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    }
+    .lang-btn:hover { border-color: var(--primary); }
+
+    /* Hero */
+    .hero {
+      padding: 72px 0 56px;
+      background: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.15), transparent 55%);
+    }
+    .hero-grid {
+      display: grid; grid-template-columns: 1.15fr 0.85fr; gap: 48px; align-items: center;
+    }
+    .pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--primary-glow); color: #34d399;
+      border: 1px solid rgba(52, 211, 153, 0.3);
+      padding: 6px 14px; border-radius: 999px; font-size: 0.84rem; font-weight: 600;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      font-weight: 800; line-height: 1.25; margin-bottom: 18px;
+    }
+    h1 span { color: var(--primary); }
+    .hero-desc {
+      color: var(--muted); font-size: 1.06rem; margin-bottom: 28px; max-width: 560px;
+    }
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 22px; border-radius: 12px; font-weight: 700; font-size: 0.95rem;
+      text-decoration: none; transition: transform 0.15s, background 0.15s, border-color 0.15s;
+      cursor: pointer; border: none; font-family: inherit;
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .btn-primary { background: var(--primary); color: #022c22; }
+    .btn-primary:hover { background: #34d399; }
+    .btn-secondary {
+      background: var(--card); color: var(--text);
+      border: 1px solid var(--card-border);
+    }
+    .btn-secondary:hover { border-color: var(--primary); }
+
+    .stats-row {
+      display: flex; flex-wrap: wrap; gap: 24px;
+      padding-top: 16px; border-top: 1px solid var(--card-border);
+    }
+    .stat strong { display: block; font-size: 1.25rem; color: var(--text); }
+    .stat span { font-size: 0.82rem; color: var(--muted); }
+
+    /* Phone Mockup */
+    .phone-frame {
+      background: #0f172a;
+      border: 6px solid #1e293b;
+      border-radius: 36px;
+      padding: 18px;
+      box-shadow: 0 28px 70px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255,255,255,0.06);
+      max-width: 340px;
+      margin: 0 auto;
+    }
+    .phone-notch {
+      width: 90px; height: 6px; background: #334155;
+      border-radius: 99px; margin: 0 auto 16px;
+    }
+    .mock-hero {
+      background: linear-gradient(135deg, #047857, #10b981);
+      border-radius: 20px; padding: 16px; color: #fff; margin-bottom: 14px;
+    }
+    .mock-hero small { opacity: 0.85; font-size: 0.78rem; }
+    .mock-hero .big { font-size: 1.45rem; font-weight: 800; margin: 4px 0 10px; }
+    .mock-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .mock-pill {
+      background: rgba(255,255,255,0.16); border-radius: 12px; padding: 8px 10px;
+      font-size: 0.76rem;
+    }
+    .mock-pill b { display: block; font-size: 0.86rem; margin-top: 2px; }
+    .mock-tx {
+      display: flex; align-items: center; justify-content: space-between;
+      background: #162033; border: 1px solid #24324a;
+      border-radius: 14px; padding: 10px 12px; margin-bottom: 8px;
+      font-size: 0.82rem;
+    }
+    .mock-tx .sub { color: var(--muted); font-size: 0.72rem; }
+    .amt-exp { color: #f87171; font-weight: 700; }
+    .amt-inc { color: #34d399; font-weight: 700; }
+
+    /* Sections */
+    section { padding: 64px 0; }
+    .section-title {
+      font-size: clamp(1.5rem, 2.8vw, 2.1rem);
+      font-weight: 800; margin-bottom: 10px;
+    }
+    .section-sub { color: var(--muted); margin-bottom: 34px; max-width: 640px; }
+
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+    .card {
+      background: var(--card); border: 1px solid var(--card-border);
+      border-radius: var(--radius); padding: 22px;
+      transition: border-color 0.2s;
+    }
+    .card:hover { border-color: rgba(16, 185, 129, 0.55); }
+    .card-icon {
+      width: 42px; height: 42px; border-radius: 12px;
+      background: var(--primary-glow); color: #34d399;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem; margin-bottom: 14px;
+    }
+    .card h3 { font-size: 1.05rem; margin-bottom: 6px; }
+    .card p { font-size: 0.9rem; color: var(--muted); }
+
+    /* Live SMS Parser Demo */
+    .demo-box {
+      background: var(--card); border: 1px solid var(--card-border);
+      border-radius: 22px; padding: 24px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 22px;
+    }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+    .chip {
+      background: var(--bg-soft); color: var(--muted);
+      border: 1px solid var(--card-border); border-radius: 999px;
+      padding: 5px 12px; font-size: 0.8rem; cursor: pointer; font-family: inherit;
+    }
+    .chip:hover { color: var(--text); border-color: var(--primary); }
+    textarea {
+      width: 100%; min-height: 150px; resize: vertical;
+      background: var(--bg); color: var(--text);
+      border: 1px solid var(--card-border); border-radius: 14px;
+      padding: 14px; font-family: inherit; font-size: 0.92rem; line-height: 1.65;
+    }
+    textarea:focus { outline: none; border-color: var(--primary); }
+    .parse-output {
+      background: var(--bg); border: 1px solid var(--card-border);
+      border-radius: 14px; padding: 18px;
+      display: flex; flex-direction: column; justify-content: center; gap: 10px;
+    }
+    .kv {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid rgba(36, 50, 74, 0.6);
+      font-size: 0.92rem;
+    }
+    .kv:last-child { border-bottom: none; }
+    .kv span { color: var(--muted); }
+    .kv strong { color: var(--text); }
+
+    /* Privacy Audit */
+    .audit-card {
+      background: linear-gradient(135deg, rgba(6, 95, 70, 0.35), rgba(17, 24, 39, 0.95));
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      border-radius: 22px; padding: 28px;
+      display: grid; grid-template-columns: 1fr 1.1fr; gap: 24px; align-items: center;
+    }
+    pre {
+      background: #070c16; border: 1px solid #1e293b; border-radius: 14px;
+      padding: 16px; overflow-x: auto; direction: ltr; text-align: left;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.82rem;
+      color: #a7f3d0; line-height: 1.6;
+    }
+
+    /* Banks grid */
+    .banks-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)); gap: 10px;
+    }
+    .bank-chip {
+      display: flex; align-items: center; gap: 10px;
+      background: var(--card); border: 1px solid var(--card-border);
+      border-radius: 12px; padding: 10px 14px; font-size: 0.88rem; font-weight: 500;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--card-border);
+      padding: 36px 0; color: var(--muted); font-size: 0.88rem;
+      text-align: center;
+    }
+    footer a { color: var(--primary); text-decoration: none; }
+
+    @media (max-width: 860px) {
+      .hero-grid, .demo-box, .audit-card { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: 1fr; }
+      .nav-links a.hide-sm { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="container nav-inner">
+      <a class="brand" href="#">
+        <img src="favicon.svg" alt="KharjNegar" />
+        <span data-fa="خرج‌نگار" data-en="KharjNegar">خرج‌نگار</span>
+      </a>
+      <div class="nav-links">
+        <a class="hide-sm" href="#features" data-fa="امکانات" data-en="Features">امکانات</a>
+        <a class="hide-sm" href="#demo" data-fa="تست زنده پیامک" data-en="Live Demo">تست زنده پیامک</a>
+        <a class="hide-sm" href="#privacy" data-fa="حریم خصوصی" data-en="Privacy">حریم خصوصی</a>
+        <a class="hide-sm" href="#banks" data-fa="بانک‌ها" data-en="Banks">بانک‌ها</a>
+        <a href="https://github.com/HamidRezaAshkiyan/kharjnegar" target="_blank" rel="noopener">GitHub</a>
+        <button class="lang-btn" id="langToggle" type="button">English</button>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <div class="container hero-grid">
+      <div>
+        <div class="pill">
+          <span>🛡️</span>
+          <span data-fa="۱۰۰٪ آفلاین • بدون مجوز اینترنت • متن‌باز (MIT)" data-en="100% Offline • Zero INTERNET Permission • MIT Open-Source">۱۰۰٪ آفلاین • بدون مجوز اینترنت • متن‌باز (MIT)</span>
+        </div>
+        <h1 data-fa="ردیاب هوشمند هزینه‌های <span>بانک‌های ایرانی</span> از روی پیامک"
+            data-en="100% Offline <span>Iranian Bank SMS</span> Expense Tracker">
+          ردیاب هوشمند هزینه‌های <span>بانک‌های ایرانی</span> از روی پیامک
+        </h1>
+        <p class="hero-desc"
+           data-fa="خرج‌نگار پیامک‌های ۲۵+ بانک و نئوبانک ایرانی را به‌صورت خودکار و کاملاً روی گوشی شما تحلیل می‌کند؛ با تقویم شمسی، تبدیل خودکار ریال و تومان، دسته‌بندی هوشمند، نمودارهای تحلیلی و خروجی اکسل — بدون اینکه حتی یک بایت از اطلاعات شما به اینترنت ارسال شود."
+           data-en="KharjNegar automatically parses SMS from 25+ Iranian banks and neo-banks strictly on your device — featuring a Jalali (Shamsi) calendar, Rial/Toman normalization, smart categorization, analytics, and Excel-ready CSV export with zero network permissions.">
+          خرج‌نگار پیامک‌های ۲۵+ بانک و نئوبانک ایرانی را به‌صورت خودکار و کاملاً روی گوشی شما تحلیل می‌کند؛ با تقویم شمسی، تبدیل خودکار ریال و تومان، دسته‌بندی هوشمند، نمودارهای تحلیلی و خروجی اکسل — بدون اینکه حتی یک بایت از اطلاعات شما به اینترنت ارسال شود.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://github.com/HamidRezaAshkiyan/kharjnegar/releases/latest/download/kharjnegar-v1.0.0.apk">
+            <span data-fa="⬇️ دانلود فایل APK (نسخه ۱.۰.۰ — ۱.۶ مگابایت)" data-en="⬇️ Download APK (v1.0.0 — 1.6 MB)">⬇️ دانلود فایل APK (نسخه ۱.۰.۰ — ۱.۶ مگابایت)</span>
+          </a>
+          <a class="btn btn-secondary" href="https://github.com/HamidRezaAshkiyan/kharjnegar" target="_blank" rel="noopener">
+            <span data-fa="مشاهده سورس‌کد در گیت‌هاب" data-en="View Source on GitHub">مشاهده سورس‌کد در گیت‌هاب</span>
+          </a>
+        </div>
+        <div class="stats-row">
+          <div class="stat">
+            <strong data-fa="۰ بایت" data-en="0 Bytes">۰ بایت</strong>
+            <span data-fa="مصرف اینترنت (بدون مجوز)" data-en="Network usage (Zero permission)">مصرف اینترنت (بدون مجوز)</span>
+          </div>
+          <div class="stat">
+            <strong data-fa="۲۵+ بانک" data-en="25+ Banks">۲۵+ بانک</strong>
+            <span data-fa="بانک‌های سنتی و نئوبانک‌ها" data-en="Traditional & Neo-banks">بانک‌های سنتی و نئوبانک‌ها</span>
+          </div>
+          <div class="stat">
+            <strong data-fa="۱.۶ مگابایت" data-en="1.64 MB">۱.۶ مگابایت</strong>
+            <span data-fa="سبک و بومی (Kotlin + Compose)" data-en="Native Kotlin + Compose APK">سبک و بومی (Kotlin + Compose)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="phone-frame" aria-label="App Preview">
+        <div class="phone-notch"></div>
+        <div class="mock-hero">
+          <small data-fa="تراز آذر ۱۴۰۵" data-en="Azar 1405 Net Balance">تراز آذر ۱۴۰۵</small>
+          <div class="big" data-fa="+۳۷,۷۹۵,۰۰۰ تومان" data-en="+37,795,000 Toman">+۳۷,۷۹۵,۰۰۰ تومان</div>
+          <div class="mock-pills">
+            <div class="mock-pill">
+              <span data-fa="درآمد" data-en="Income">درآمد</span>
+              <b data-fa="۴۶,۵۰۰,۰۰۰" data-en="46,500,000">۴۶,۵۰۰,۰۰۰</b>
+            </div>
+            <div class="mock-pill">
+              <span data-fa="هزینه" data-en="Expense">هزینه</span>
+              <b data-fa="۸,۷۰۵,۰۰۰" data-en="8,705,000">۸,۷۰۵,۰۰۰</b>
+            </div>
+          </div>
+        </div>
+        <div class="mock-tx">
+          <div>
+            <strong data-fa="اسنپ فود" data-en="SnappFood">اسنپ فود</strong>
+            <div class="sub" data-fa="بلوبانک • غذا و رستوران" data-en="Blu Bank • Food & Dining">بلوبانک • غذا و رستوران</div>
+          </div>
+          <span class="amt-exp" data-fa="-۳۸۵,۰۰۰" data-en="-385,000">-۳۸۵,۰۰۰</span>
+        </div>
+        <div class="mock-tx">
+          <div>
+            <strong data-fa="دیجی‌کالا" data-en="Digikala">دیجی‌کالا</strong>
+            <div class="sub" data-fa="بانک ملی • خرید" data-en="Bank Melli • Shopping">بانک ملی • خرید</div>
+          </div>
+          <span class="amt-exp" data-fa="-۳,۲۰۰,۰۰۰" data-en="-3,200,000">-۳,۲۰۰,۰۰۰</span>
+        </div>
+        <div class="mock-tx">
+          <div>
+            <strong data-fa="سود سپرده" data-en="Interest Credit">سود سپرده</strong>
+            <div class="sub" data-fa="بانک سامان • درآمد" data-en="Saman Bank • Income">بانک سامان • درآمد</div>
+          </div>
+          <span class="amt-inc" data-fa="+۱,۵۰۰,۰۰۰" data-en="+1,500,000">+۱,۵۰۰,۰۰۰</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <section id="features">
+    <div class="container">
+      <h2 class="section-title" data-fa="امکانات کلیدی" data-en="Key Features">امکانات کلیدی</h2>
+      <p class="section-sub" data-fa="طراحی‌شده اختصاصی برای اکوسیستم بانکی ایران، با تمرکز مطلق بر حریم خصوصی و سرعت." data-en="Purpose-built for the Iranian banking ecosystem with uncompromising privacy and speed.">طراحی‌شده اختصاصی برای اکوسیستم بانکی ایران، با تمرکز مطلق بر حریم خصوصی و سرعت.</p>
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">📩</div>
+          <h3 data-fa="ثبت آنی و اسکن پیامک‌های قبلی" data-en="Real-Time & Historical SMS Scan">ثبت آنی و اسکن پیامک‌های قبلی</h3>
+          <p data-fa="پیامک‌های جدید را لحظه‌ای ثبت می‌کند و می‌توانید پیامک‌های ۳۰ روز، ۹۰ روز، ۱ سال یا کل صندوق را بدون تکرار (SHA-256) اسکن کنید." data-en="Captures incoming bank SMS automatically and scans your inbox (30d / 90d / 1y / All) with SHA-256 deduplication.">پیامک‌های جدید را لحظه‌ای ثبت می‌کند و می‌توانید پیامک‌های ۳۰ روز، ۹۰ روز، ۱ سال یا کل صندوق را بدون تکرار (SHA-256) اسکن کنید.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔐</div>
+          <h3 data-fa="فیلتر هوشمند رمز پویا" data-en="Smart OTP & Noise Filtering">فیلتر هوشمند رمز پویا</h3>
+          <p data-fa="پیامک‌های رمز پویا، کد تایید، تراکنش‌های ناموفق و پیامک‌های تبلیغاتی را به‌صورت خودکار نادیده می‌گیرد." data-en="Automatically ignores dynamic passwords (رمز پویا), verification codes, failed transactions, and promo SMS.">پیامک‌های رمز پویا، کد تایید، تراکنش‌های ناموفق و پیامک‌های تبلیغاتی را به‌صورت خودکار نادیده می‌گیرد.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📅</div>
+          <h3 data-fa="تقویم شمسی (جلالی) بومی" data-en="Native Jalali (Shamsi) Calendar">تقویم شمسی (جلالی) بومی</h3>
+          <p data-fa="گزارش ماهانه، نمودار هزینه روزانه، مقایسه ۶ ماهه درآمد و هزینه و مدیریت بودجه بر اساس ماه‌های شمسی." data-en="Monthly switching, daily spending bars, 6-month income vs. expense comparisons, and budgeting in Solar Hijri dates.">گزارش ماهانه، نمودار هزینه روزانه، مقایسه ۶ ماهه درآمد و هزینه و مدیریت بودجه بر اساس ماه‌های شمسی.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">💱</div>
+          <h3 data-fa="تشخیص خودکار ریال و تومان" data-en="Automatic Rial & Toman Handling">تشخیص خودکار ریال و تومان</h3>
+          <p data-fa="تفاوت پیامک‌های ریالی (مثل ملت و ملی) و تومانی (مثل بلوبانک) را خودکار تشخیص داده و با واحد دلخواه شما نمایش می‌دهد." data-en="Detects Rial vs. Toman per SMS and per bank automatically, normalizing internally and displaying in your chosen unit.">تفاوت پیامک‌های ریالی (مثل ملت و ملی) و تومانی (مثل بلوبانک) را خودکار تشخیص داده و با واحد دلخواه شما نمایش می‌دهد.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🏷️</div>
+          <h3 data-fa="دسته‌بندی هوشمند و موجودی بانک‌ها" data-en="Auto-Categorization & Bank Balances">دسته‌بندی هوشمند و موجودی بانک‌ها</h3>
+          <p data-fa="تشخیص خودکار اسنپ، اسنپ‌فود، دیجی‌کالا، افق کوروش، ایرانسل، داروخانه و نمایش آخرین موجودی هر حساب بانکی." data-en="Recognizes popular Iranian merchants automatically and tracks the latest reported balance across each bank account.">تشخیص خودکار اسنپ، اسنپ‌فود، دیجی‌کالا، افق کوروش، ایرانسل، داروخانه و نمایش آخرین موجودی هر حساب بانکی.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📊</div>
+          <h3 data-fa="خروجی اکسل (CSV) و بکاپ JSON" data-en="Excel CSV & JSON Backup">خروجی اکسل (CSV) و بکاپ JSON</h3>
+          <p data-fa="خروجی CSV با UTF-8 BOM برای باز شدن بی‌نقص فارسی در اکسل، و پشتیبان‌گیری/بازیابی کامل آفلاین با JSON." data-en="UTF-8 BOM CSV export that opens cleanly in Excel with Persian intact, plus full offline JSON backup & restore.">خروجی CSV با UTF-8 BOM برای باز شدن بی‌نقص فارسی در اکسل، و پشتیبان‌گیری/بازیابی کامل آفلاین با JSON.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="demo">
+    <div class="container">
+      <h2 class="section-title" data-fa="تست زنده موتور تحلیل پیامک" data-en="Interactive SMS Parser Demo">تست زنده موتور تحلیل پیامک</h2>
+      <p class="section-sub" data-fa="روی یکی از نمونه‌ها کلیک کنید یا متن یک پیامک بانکی را جای‌گذاری کنید تا تحلیل آفلاین را همین‌جا ببینید." data-en="Click a sample Iranian bank SMS or paste your own below — runs 100% locally in your browser.">روی یکی از نمونه‌ها کلیک کنید یا متن یک پیامک بانکی را جای‌گذاری کنید تا تحلیل آفلاین را همین‌جا ببینید.</p>
+
+      <div class="demo-box">
+        <div>
+          <div class="chip-row">
+            <button class="chip" type="button" onclick="loadSample('blu')" data-fa="بلوبانک (تومان)" data-en="Blu Bank (Toman)">بلوبانک (تومان)</button>
+            <button class="chip" type="button" onclick="loadSample('mellat')" data-fa="بانک ملت" data-en="Bank Mellat">بانک ملت</button>
+            <button class="chip" type="button" onclick="loadSample('melli')" data-fa="بانک ملی" data-en="Bank Melli">بانک ملی</button>
+            <button class="chip" type="button" onclick="loadSample('pasargad')" data-fa="پاسارگاد" data-en="Pasargad">پاسارگاد</button>
+            <button class="chip" type="button" onclick="loadSample('otp')" data-fa="رمز پویا (رد می‌شود)" data-en="OTP (Rejected)">رمز پویا (رد می‌شود)</button>
+          </div>
+          <textarea id="smsInput" oninput="runParse()">بلوبانک
+مبلغ ۳۸۵,۰۰۰ تومان از حساب شما برداشت شد.
+پذیرنده: اسنپ فود
+موجودی: ۱۲,۴۵۰,۰۰۰ تومان</textarea>
+        </div>
+        <div class="parse-output" id="parseOutput"></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="privacy">
+    <div class="container">
+      <div class="audit-card">
+        <div>
+          <h2 class="section-title" data-fa="تضمین حریم خصوصی با ممیزی خودکار CI" data-en="CI-Enforced Zero-Internet Privacy">تضمین حریم خصوصی با ممیزی خودکار CI</h2>
+          <p class="section-sub" style="margin-bottom: 14px;"
+             data-fa="در هر بار ساخت خودکار در GitHub Actions، ابزار رسمی aapt2 مجوزهای فایل APK نهایی را بررسی می‌کند. اگر حتی یک کتابخانه جانبی مجوز INTERNET اضافه کند، ساخت متوقف می‌شود."
+             data-en="Every GitHub Actions build audits the compiled APK with Android's aapt2 tool. If any dependency ever introduces android.permission.INTERNET, the build fails automatically.">
+            در هر بار ساخت خودکار در GitHub Actions، ابزار رسمی aapt2 مجوزهای فایل APK نهایی را بررسی می‌کند. اگر حتی یک کتابخانه جانبی مجوز INTERNET اضافه کند، ساخت متوقف می‌شود.
+          </p>
+          <p style="color:#34d399; font-weight:600; font-size:0.9rem;"
+             data-fa="✓ allowBackup=false • ✓ بدون آنالیتیکس • ✓ بدون کلود"
+             data-en="✓ allowBackup=false • ✓ Zero Analytics • ✓ Zero Cloud">
+            ✓ allowBackup=false • ✓ بدون آنالیتیکس • ✓ بدون کلود
+          </p>
+        </div>
+        <pre>$ aapt2 dump permissions kharjnegar-v1.0.0.apk
+package: com.kharjnegar.app
+uses-permission: name='android.permission.READ_SMS'
+uses-permission: name='android.permission.RECEIVE_SMS'
+uses-permission: name='android.permission.POST_NOTIFICATIONS'
+
+# android.permission.INTERNET -> NOT PRESENT ✓
+# android.permission.ACCESS_NETWORK_STATE -> NOT PRESENT ✓</pre>
+      </div>
+    </div>
+  </section>
+
+  <section id="banks">
+    <div class="container">
+      <h2 class="section-title" data-fa="پشتیبانی از ۲۵+ بانک و نئوبانک ایرانی" data-en="25+ Supported Iranian Banks">پشتیبانی از ۲۵+ بانک و نئوبانک ایرانی</h2>
+      <p class="section-sub" data-fa="علاوه بر بانک‌های زیر، یک تحلیل‌گر عمومی نیز برای سایر پیامک‌های بانکی ایران تعبیه شده است." data-en="In addition to dedicated rules for these 25 banks, a generic Iranian bank SMS fallback parser is built in.">علاوه بر بانک‌های زیر، یک تحلیل‌گر عمومی نیز برای سایر پیامک‌های بانکی ایران تعبیه شده است.</p>
+      <div class="banks-grid" id="banksGrid"></div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>
+        <span data-fa="ساخته‌شده با ❤️ به‌صورت متن‌باز تحت مجوز MIT •" data-en="Built with ❤️ as MIT Open-Source •">ساخته‌شده با ❤️ به‌صورت متن‌باز تحت مجوز MIT •</span>
+        <a href="https://github.com/HamidRezaAshkiyan/kharjnegar" target="_blank" rel="noopener">GitHub</a> ·
+        <a href="https://github.com/HamidRezaAshkiyan/kharjnegar/releases" target="_blank" rel="noopener" data-fa="دانلود نسخه‌ها" data-en="Releases">دانلود نسخه‌ها</a>
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    const BANKS = [
+      ['بانک ملت', 'Bank Mellat', '#B91C1C'],
+      ['بانک ملی ایران', 'Bank Melli Iran', '#0E7490'],
+      ['بلوبانک', 'Blu Bank', '#2563EB'],
+      ['بانک سامان', 'Saman Bank', '#0284C7'],
+      ['بانک صادرات', 'Bank Saderat', '#1D4ED8'],
+      ['بانک تجارت', 'Bank Tejarat', '#1E3A8A'],
+      ['بانک سپه', 'Bank Sepah', '#D97706'],
+      ['بانک پاسارگاد', 'Bank Pasargad', '#B45309'],
+      ['ویپاد', 'Wepod', '#7C3AED'],
+      ['بانک کشاورزی', 'Bank Keshavarzi', '#15803D'],
+      ['بانک رفاه', 'Refah Bank', '#0369A1'],
+      ['بانک مسکن', 'Bank Maskan', '#EA580C'],
+      ['بانک پارسیان', 'Parsian Bank', '#C2410C'],
+      ['بانک شهر', 'Shahr Bank', '#DC2626'],
+      ['بانک آینده', 'Ayandeh Bank', '#9333EA'],
+      ['بانک رسالت', 'Resalat Bank', '#0D9488'],
+      ['بانک مهر ایران', 'Mehr Iran Bank', '#059669'],
+      ['بانک سینا', 'Sina Bank', '#2563EB'],
+      ['اقتصاد نوین', 'Eghtesad Novin', '#6D28D9'],
+      ['بانک کارآفرین', 'Karafarin Bank', '#16A34A'],
+      ['بانک دی', 'Bank Dey', '#0891B2'],
+      ['بانک گردشگری', 'Tourism Bank', '#CA8A04'],
+      ['بانک سرمایه', 'Sarmayeh Bank', '#4F46E5'],
+      ['بانک ایران زمین', 'Iran Zamin Bank', '#7E22CE'],
+      ['پست بانک ایران', 'Post Bank Iran', '#047857']
+    ];
+
+    const SAMPLES = {
+      blu: "بلوبانک\nمبلغ ۳۸۵,۰۰۰ تومان از حساب شما برداشت شد.\nپذیرنده: اسنپ فود\nموجودی: ۱۲,۴۵۰,۰۰۰ تومان",
+      mellat: "بانک ملت\nحساب 12345678\nبرداشت 18,500,000 ریال\nفروشگاه افق کوروش\nمانده 493,900,000 ریال",
+      melli: "بانک ملی ایران\nکارت 6037****4821\nخرید: 32,000,000 ریال\nپذیرنده: دیجی کالا\nمانده: 128,600,000 ریال",
+      pasargad: "بانک پاسارگاد\nبرداشت از حساب 201-8841\nمبلغ: 6,500,000 ریال\nبابت بسته اینترنت ایرانسل\nمانده: 67,100,000 ریال",
+      otp: "بانک ملت\nرمز پویا: 482910\nمبلغ: 500,000 ریال\nپذیرنده: دیجی کالا"
+    };
+
+    let lang = 'fa';
+
+    function renderBanks() {
+      const grid = document.getElementById('banksGrid');
+      grid.innerHTML = BANKS.map(([fa, en, color]) =>
+        `<div class="bank-chip"><span class="dot" style="background:${color}"></span><span>${lang === 'fa' ? fa : en}</span></div>`
+      ).join('');
+    }
+
+    function normalize(s) {
+      return s
+        .replace(/[۰-۹]/g, d => String.fromCharCode(d.charCodeAt(0) - 0x06F0 + 48))
+        .replace(/[٠-٩]/g, d => String.fromCharCode(d.charCodeAt(0) - 0x0660 + 48))
+        .replace(/ي/g, 'ی').replace(/ك/g, 'ک').replace(/٬/g, ',');
+    }
+
+    function loadSample(key) {
+      document.getElementById('smsInput').value = SAMPLES[key];
+      runParse();
+    }
+
+    function runParse() {
+      const raw = document.getElementById('smsInput').value || '';
+      const norm = normalize(raw);
+      const lower = norm.toLowerCase();
+      const out = document.getElementById('parseOutput');
+
+      const reject = ['رمز پویا', 'رمز دوم', 'کد تایید', 'otp', 'ناموفق', 'موجودی کافی نیست'];
+      if (!raw.trim() || reject.some(k => lower.includes(k))) {
+        out.innerHTML = `<div style="color:#f87171;font-weight:700">${lang === 'fa'
+          ? '🚫 فیلتر شد (پیامک رمز پویا، ناموفق یا غیرتراکنشی)'
+          : '🚫 Filtered out (OTP, failed, or non-transaction SMS)'}</div>`;
+        return;
+      }
+
+      const bankEntry = BANKS.find(([fa, en]) => lower.includes(fa.replace('بانک ', '')) || lower.includes(en.toLowerCase()));
+      const bankName = bankEntry ? (lang === 'fa' ? bankEntry[0] : bankEntry[1]) : (lang === 'fa' ? 'سایر بانک‌ها' : 'Other Bank');
+      const isToman = (lower.includes('تومان') || lower.includes('تومن')) && !lower.includes('ریال');
+      const balMatch = norm.match(/(?:مانده|موجودی)\s*[:：\-]?\s*([\d,]+)/);
+      const withoutBal = norm.replace(/(?:مانده|موجودی)\s*[:：\-]?\s*[\d,]+/g, ' ').replace(/(?:حساب|کارت)\s*[:：\-]?\s*[0-9\*\-\.]{4,24}/g, ' ');
+      const amtMatch = withoutBal.match(/(?:برداشت|خرید|پرداخت|واریز|مبلغ)\s*[:：\-]?\s*([\d,]+)/) || withoutBal.match(/([\d,]{4,15})\s*(?:ریال|تومان)/);
+
+      if (!amtMatch) {
+        out.innerHTML = `<div style="color:#94a3b8">${lang === 'fa' ? 'مبلغ تراکنش یافت نشد.' : 'No transaction amount found.'}</div>`;
+        return;
+      }
+
+      const amtRaw = parseInt(amtMatch[1].replace(/,/g, ''), 10);
+      const amtToman = isToman ? amtRaw : Math.floor(amtRaw / 10);
+      const balToman = balMatch ? (isToman ? parseInt(balMatch[1].replace(/,/g, ''), 10) : Math.floor(parseInt(balMatch[1].replace(/,/g, ''), 10) / 10)) : null;
+      const isIncome = lower.includes('واریز') || lower.includes('بستانکار') || lower.includes('سود');
+      const unitLabel = lang === 'fa' ? 'تومان' : 'Toman';
+      const fmt = n => n.toLocaleString('en-US');
+
+      out.innerHTML = `
+        <div class="kv"><span>${lang === 'fa' ? 'بانک' : 'Bank'}</span><strong>${bankName}</strong></div>
+        <div class="kv"><span>${lang === 'fa' ? 'نوع تراکنش' : 'Type'}</span><strong style="color:${isIncome ? '#34d399' : '#f87171'}">${isIncome ? (lang === 'fa' ? 'درآمد (واریز)' : 'Income') : (lang === 'fa' ? 'هزینه (برداشت)' : 'Expense')}</strong></div>
+        <div class="kv"><span>${lang === 'fa' ? 'مبلغ (تومان)' : 'Amount (Toman)'}</span><strong>${fmt(amtToman)} ${unitLabel}</strong></div>
+        ${balToman !== null ? `<div class="kv"><span>${lang === 'fa' ? 'مانده حساب' : 'Balance After'}</span><strong>${fmt(balToman)} ${unitLabel}</strong></div>` : ''}
+      `;
+    }
+
+    document.getElementById('langToggle').addEventListener('click', () => {
+      lang = lang === 'fa' ? 'en' : 'fa';
+      document.documentElement.lang = lang;
+      document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+      document.getElementById('langToggle').textContent = lang === 'fa' ? 'English' : 'فارسی';
+      document.querySelectorAll('[data-fa]').forEach(el => {
+        el.innerHTML = el.getAttribute(lang === 'fa' ? 'data-fa' : 'data-en');
+      });
+      renderBanks();
+      runParse();
+    });
+
+    renderBanks();
+    runParse();
+  </script>
+</body>
+</html>

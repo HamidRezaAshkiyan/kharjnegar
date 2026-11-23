@@ -1,86 +1,117 @@
-# خرج‌نگار — KharjNegar
+<div align="center">
+  <img src="docs/favicon.svg" alt="KharjNegar Logo" width="88" height="88" />
+  <h1>خرج‌نگار — KharjNegar</h1>
+  <p><strong>100% Offline, Open-Source Iranian Bank SMS Expense Tracker for Android</strong><br/>
+  <strong>ردیاب هزینه‌های بانکی از روی پیامک — ۱۰۰٪ آفلاین و متن‌باز برای اندروید</strong></p>
 
-[![CI Build & Offline Privacy Audit](https://github.com/HamidRezaAshkiyan/kharjnegar/actions/workflows/ci.yml/badge.svg)](https://github.com/HamidRezaAshkiyan/kharjnegar/actions/workflows/ci.yml)
-[![Release](https://img.shields.io/github/v/release/HamidRezaAshkiyan/kharjnegar)](https://github.com/HamidRezaAshkiyan/kharjnegar/releases)
-[![License: MIT](https://img.shields.io/badge/License-MIT-emerald.svg)](LICENSE)
-[![100% Offline](https://img.shields.io/badge/Privacy-100%25%20Offline%20%7C%20Zero%20Internet%20Permission-059669.svg)](#privacy-guarantee)
+  <p>
+    <a href="https://hamidrezaashkiyan.github.io/kharjnegar/"><img src="https://img.shields.io/badge/Website-Live%20Demo-10b981?style=for-the-badge" alt="Website & Live Demo" /></a>
+    <a href="https://github.com/HamidRezaAshkiyan/kharjnegar/releases/latest"><img src="https://img.shields.io/github/v/release/HamidRezaAshkiyan/kharjnegar?style=for-the-badge&color=059669" alt="Latest Release" /></a>
+    <a href="https://github.com/HamidRezaAshkiyan/kharjnegar/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/HamidRezaAshkiyan/kharjnegar/ci.yml?style=for-the-badge&label=CI%20%26%20Offline%20Audit" alt="CI Status" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="MIT License" /></a>
+  </p>
 
-**100% Offline, Open-Source Iranian Bank SMS Expense Tracker for Android**  
-**ردیاب هزینه‌های بانکی از روی پیامک — ۱۰۰٪ آفلاین و متن‌باز برای اندروید**
+  <p>
+    <a href="https://hamidrezaashkiyan.github.io/kharjnegar/">🌐 Project Website & Live SMS Parser Demo</a> ·
+    <a href="https://github.com/HamidRezaAshkiyan/kharjnegar/releases/latest">⬇️ Download APK (~1.6 MB)</a> ·
+    <a href="#privacy-guarantee">🛡️ Privacy Audit</a> ·
+    <a href="#supported-iranian-banks-25">🏦 Supported Banks</a>
+  </p>
+</div>
+
+---
+
+## Why KharjNegar?
+
+Most expense trackers require cloud accounts, bank logins, or internet access — exposing sensitive SMS and financial history. **KharjNegar (خرج‌نگار)** is built from the ground up in native **Kotlin + Jetpack Compose** to parse Iranian bank SMS **100% on-device**, with **zero `INTERNET` permission** enforced automatically in CI.
+
+> **چرا خرج‌نگار؟**  
+> خرج‌نگار هیچ مجوز اینترنتی (`INTERNET`) ندارد، حساب کاربری نمی‌خواهد و تمام پیامک‌های بانکی شما را کاملاً آفلاین روی گوشی تحلیل و دسته‌بندی می‌کند.
 
 ---
 
 ## Privacy Guarantee
 
-KharjNegar is engineered so that **your financial data can never leave your phone**:
+- **Zero `INTERNET` Permission**: `android.permission.INTERNET` and `android.permission.ACCESS_NETWORK_STATE` are intentionally **not declared** in [`AndroidManifest.xml`](app/src/main/AndroidManifest.xml).
+- **Zero Cloud Backup**: `android:allowBackup="false"` prevents Android from syncing your local SQLite database to external cloud backups.
+- **Zero Trackers or Analytics**: No Firebase, no Crashlytics, no ad SDKs, no network libraries.
+- **Automated CI Enforcement**: Every push and release runs `aapt2 dump permissions` on the compiled APK and fails the build if any network permission is ever introduced.
 
-- **Zero `INTERNET` permission** — `android.permission.INTERNET` and `android.permission.ACCESS_NETWORK_STATE` are intentionally **not declared** in `AndroidManifest.xml`.
-- **Zero Cloud Backup** — `android:allowBackup="false"` prevents Android from syncing your local SQLite database to cloud servers.
-- **Zero Analytics / Telemetry / Trackers** — no Firebase, no Crashlytics, no third-party SDKs.
-- **Automated CI Audit** — every GitHub Actions build runs `aapt2 dump permissions` against the compiled APK and fails if any network permission is ever introduced.
-
-You can verify any release APK yourself:
+Verify any release APK yourself:
 
 ```bash
 aapt2 dump permissions kharjnegar-v1.0.0.apk
 ```
 
-Only `READ_SMS`, `RECEIVE_SMS`, and optional `POST_NOTIFICATIONS` (Android 13+) are declared.
+Expected output:
+
+```text
+package: com.kharjnegar.app
+uses-permission: name='android.permission.READ_SMS'
+uses-permission: name='android.permission.RECEIVE_SMS'
+uses-permission: name='android.permission.POST_NOTIFICATIONS'
+```
+
+---
+
+## Architecture (100% On-Device)
+
+```mermaid
+flowchart LR
+    SMS["Incoming / Inbox Bank SMS"] --> Parser["BankSmsParser<br/>(25+ Banks, OTP Filter,<br/>Rial/Toman Normalizer)"]
+    Parser --> Cat["TransactionCategorizer<br/>(Built-in + Custom Rules)"]
+    Cat --> DB[("Room SQLite DB<br/>(SHA-256 Deduplicated)")]
+    DB --> UI["Jetpack Compose UI<br/>(Jalali Calendar, Charts,<br/>RTL/LTR, Vazirmatn)"]
+    DB --> Export["Local SAF Export<br/>(UTF-8 BOM CSV & JSON)"]
+```
 
 ---
 
 ## Features
 
-- **Real-Time & Historical SMS Parsing**: Automatically captures incoming Iranian bank SMS in the background and lets you scan your existing inbox (30 days, 90 days, 1 year, or all messages) with SHA-256 deduplication.
-- **Smart OTP & Noise Filtering**: Ignores dynamic passwords (`رمز پویا`), verification codes (`کد تایید`), failed transactions (`ناموفق`), and promotional messages.
-- **Rial & Toman Normalization**: Automatically detects whether each bank SMS uses `ریال` (e.g., Mellat, Melli, Saman) or `تومان` (e.g., Blu Bank), normalizes internally, and displays everything in your preferred unit (Toman or Rial).
-- **Solar Hijri (Jalali / Shamsi) Calendar**: Pure Kotlin Jalali calendar engine with monthly navigation (`فروردین` .. `اسفند`), daily spending bar charts, and 6-month income vs. expense comparisons.
-- **Multi-Bank Balance Overview**: Tracks the latest balance reported by each bank/account automatically.
-- **Auto-Categorization**: Built-in rules for Iranian merchants & services (Snapp, SnappFood, Digikala, Ofogh Kourosh, Irancell, Hamrah-e Aval, pharmacies, utility bills, transfers, bank fees, salary) with manual editing.
-- **Built-In SMS Parser Tester**: Paste any bank SMS inside the app to test parsing before importing.
-- **Bilingual RTL/LTR + Vazirmatn Font**: Native Persian (`فارسی`) RTL and English LTR toggle with offline bundled Vazirmatn typography and Material 3 Light/Dark themes.
-- **Local Export & Backup**:
-  - **CSV Export** with UTF-8 BOM (opens cleanly in Microsoft Excel & LibreOffice with Persian text intact)
-  - **JSON Backup & Restore** via Android Storage Access Framework
+| Feature | Description |
+| :--- | :--- |
+| **Real-Time & Inbox SMS Capture** | Listens for incoming bank SMS via `BroadcastReceiver` and scans existing SMS (30d / 90d / 1y / All) read-only with SHA-256 deduplication. |
+| **Smart OTP & Noise Filtering** | Ignores dynamic passwords (`رمز پویا`), verification codes (`کد تایید`), failed transactions (`ناموفق`), and promotional SMS. |
+| **Rial & Toman Normalization** | Detects `ریال` vs. `تومان` per SMS and per bank automatically, normalizes internally, and displays in your preferred unit. |
+| **Native Jalali (Shamsi) Calendar** | Pure Kotlin Solar Hijri calendar (`فروردین` .. `اسفند`) with monthly switcher, daily spending bar chart, and 6-month income vs. expense chart. |
+| **Multi-Bank Balance Tracking** | Automatically extracts and displays the latest reported balance for each bank & account suffix. |
+| **Smart Auto-Categorization** | Built-in rules for popular Iranian merchants (Snapp, SnappFood, Digikala, Ofogh Kourosh, Irancell, Hamrah-e Aval, pharmacies, utility bills, transfers, bank fees, salary). |
+| **Built-In SMS Parser Tester** | Paste any bank SMS directly inside the app (or try the [online demo](https://hamidrezaashkiyan.github.io/kharjnegar/#demo)) to preview parsed fields before saving. |
+| **Bilingual RTL/LTR + Vazirmatn** | Instant toggle between Persian (`فارسی` RTL) and English (LTR) with offline bundled Vazirmatn fonts and Material 3 Light/Dark themes. |
+| **Offline Backup & Export** | UTF-8 BOM CSV export (opens cleanly in Excel with Persian intact) and full JSON backup/restore via Android Storage Access Framework. |
 
 ---
 
 ## Supported Iranian Banks (25+)
 
-| Bank | فارسی | Default SMS Unit |
-| :--- | :--- | :--- |
-| Bank Mellat | بانک ملت | Rial |
-| Bank Melli Iran | بانک ملی ایران | Rial |
-| Blu Bank | بلوبانک | Toman |
-| Saman Bank | بانک سامان | Rial |
-| Bank Saderat | بانک صادرات | Rial |
-| Bank Tejarat | بانک تجارت | Rial |
-| Bank Sepah | بانک سپه | Rial |
-| Bank Pasargad | بانک پاسارگاد | Rial |
-| Wepod | ویپاد | Rial / Toman |
-| Bank Keshavarzi | بانک کشاورزی | Rial |
-| Refah Bank | بانک رفاه | Rial |
-| Bank Maskan | بانک مسکن | Rial |
-| Parsian Bank | بانک پارسیان | Rial |
-| Shahr Bank | بانک شهر | Rial |
-| Ayandeh Bank | بانک آینده | Rial |
-| Resalat Bank | بانک رسالت | Rial |
-| Mehr Iran Bank | بانک مهر ایران | Rial |
-| Sina Bank | بانک سینا | Rial |
-| Eghtesad Novin | بانک اقتصاد نوین | Rial |
-| Karafarin Bank | بانک کارآفرین | Rial |
-| Bank Dey | بانک دی | Rial |
-| Tourism Bank | بانک گردشگری | Rial |
-| Sarmayeh Bank | بانک سرمایه | Rial |
-| Iran Zamin Bank | بانک ایران زمین | Rial |
-| Post Bank Iran | پست بانک ایران | Rial |
-| Generic Fallback | سایر بانک‌ها | Auto-detected |
+| Bank | فارسی | Default SMS Unit | Bank | فارسی | Default SMS Unit |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Bank Mellat** | بانک ملت | Rial | **Shahr Bank** | بانک شهر | Rial |
+| **Bank Melli Iran** | بانک ملی ایران | Rial | **Ayandeh Bank** | بانک آینده | Rial |
+| **Blu Bank** | بلوبانک | Toman | **Resalat Bank** | بانک رسالت | Rial |
+| **Saman Bank** | بانک سامان | Rial | **Mehr Iran Bank** | بانک مهر ایران | Rial |
+| **Bank Saderat** | بانک صادرات | Rial | **Sina Bank** | بانک سینا | Rial |
+| **Bank Tejarat** | بانک تجارت | Rial | **Eghtesad Novin** | بانک اقتصاد نوین | Rial |
+| **Bank Sepah** | بانک سپه | Rial | **Karafarin Bank** | بانک کارآفرین | Rial |
+| **Bank Pasargad** | بانک پاسارگاد | Rial | **Bank Dey** | بانک دی | Rial |
+| **Wepod** | ویپاد | Rial / Toman | **Tourism Bank** | بانک گردشگری | Rial |
+| **Bank Keshavarzi** | بانک کشاورزی | Rial | **Sarmayeh Bank** | بانک سرمایه | Rial |
+| **Refah Bank** | بانک رفاه | Rial | **Iran Zamin Bank** | بانک ایران زمین | Rial |
+| **Bank Maskan** | بانک مسکن | Rial | **Post Bank Iran** | پست بانک ایران | Rial |
+| **Parsian Bank** | بانک پارسیان | Rial | **Generic Fallback** | سایر بانک‌ها | Auto-detected |
 
 ---
 
 ## Installation
 
-Download the latest APK directly from the [GitHub Releases](https://github.com/HamidRezaAshkiyan/kharjnegar/releases) page and install it on Android 8.0+ (API 26+).
+1. Download the latest APK from [GitHub Releases](https://github.com/HamidRezaAshkiyan/kharjnegar/releases/latest) (Android 8.0 / API 26+, ~1.64 MB).
+2. Verify the SHA-256 checksum (optional):
+   ```bash
+   sha256sum -c kharjnegar-v1.0.0.apk.sha256
+   ```
+3. Install the APK on your Android device.
+4. Open **KharjNegar** and tap **اسکن پیامک (Scan SMS)** — or tap **بارگذاری نمونه آزمایشی (Load Sample Data)** to explore first without granting SMS permissions.
 
 ---
 
@@ -92,21 +123,18 @@ Requirements: **JDK 17**, **Android SDK (API 35)**, **Gradle 8.11.1+**.
 git clone https://github.com/HamidRezaAshkiyan/kharjnegar.git
 cd kharjnegar
 
-# Run unit tests (SMS parser, Jalali calendar, categorizer, backup/export)
+# Run all 25 unit tests (SMS parser, Jalali calendar, categorizer, backup/export)
 gradle testDebugUnitTest
 
-# Build Release APK
+# Build R8-minified Release APK
 gradle assembleRelease
 ```
 
 ---
 
-## Tech Stack
+## Contributing
 
-- **Language**: Kotlin 2.0
-- **UI**: Jetpack Compose + Material 3 + Custom Canvas Charts + Bundled Vazirmatn Font
-- **Local Storage**: Room (SQLite) + Jetpack DataStore Preferences
-- **Architecture**: Single-Activity MVVM with `StateFlow` & Coroutines
+Contributions are welcome! Especially new Iranian bank SMS format samples (with personal account numbers redacted) and unit test cases in [`BankSmsParserTest.kt`](app/src/test/java/com/kharjnegar/app/BankSmsParserTest.kt).
 
 ---
 
